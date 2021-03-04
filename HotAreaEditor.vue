@@ -139,14 +139,14 @@ export default {
     },
     down(index, type) {
       if (event.button == 0 && event.buttons == 1) {
-        console.log(event)
+        console.log(event);
         this.currentArea = index;
         this.editMode = type;
         this.downPoint.x = event.x;
         this.downPoint.y = event.y;
       }
-      event.preventDefault()
-      event.stopPropagation()
+      event.preventDefault();
+      event.stopPropagation();
     },
     changeUrl() {
       let image = new Image();
@@ -180,45 +180,45 @@ export default {
         url: "",
         clazz: "",
         detail: "",
+        target: "_blank",
       });
     },
     exportCode() {},
     move() {
       if (event.button == 0 && event.buttons == 1 && this.editMode != 0) {
-        let xT = event.x - this.downPoint.x
-        let yT = event.y - this.downPoint.y
+        let xT = event.x - this.downPoint.x;
+        let yT = event.y - this.downPoint.y;
 
-        let currentAreaEle=this.areas[this.currentArea]
+        let currentAreaEle = this.areas[this.currentArea];
 
         if (this.editMode == 1) {
-          console.log(currentAreaEle)
-          this.areas[this.currentArea].point[0].x += xT
-          this.areas[this.currentArea].point[0].y += yT
-          this.areas[this.currentArea].point[1].x += xT
-          this.areas[this.currentArea].point[1].y += yT
+          this.areas[this.currentArea].point[0].x += xT;
+          this.areas[this.currentArea].point[0].y += yT;
+          this.areas[this.currentArea].point[1].x += xT;
+          this.areas[this.currentArea].point[1].y += yT;
         } else if (this.editMode == 2) {
-          if (currentAreaEle.type == 'rect') {
-            this.areas[this.currentArea].point[1].x += xT
-          } else if(currentAreaEle.type == 'circle') {
-            this.areas[this.currentArea].point[0].x -= xT
-            this.areas[this.currentArea].point[0].y -= xT
-            this.areas[this.currentArea].radius +=xT            
+          if (currentAreaEle.type == "rect") {
+            this.areas[this.currentArea].point[1].x += xT;
+          } else if (currentAreaEle.type == "circle") {
+            this.areas[this.currentArea].point[0].x -= xT;
+            this.areas[this.currentArea].point[0].y -= xT;
+            this.areas[this.currentArea].radius += xT;
           }
         } else if (this.editMode == 3) {
-          if (currentAreaEle.type == 'rect') {
-            this.areas[this.currentArea].point[1].y += yT
-          } else if(currentAreaEle.type == 'circle') {
-            this.areas[this.currentArea].radius +=xT
-          }          
+          if (currentAreaEle.type == "rect") {
+            this.areas[this.currentArea].point[1].y += yT;
+          } else if (currentAreaEle.type == "circle") {
+            this.areas[this.currentArea].radius += xT;
+          }
         }
-        this.downPoint.x = event.x
-        this.downPoint.y = event.y
+        this.downPoint.x = event.x;
+        this.downPoint.y = event.y;
       }
     },
     up() {
-      if (event.button == 0 && event.buttons == 1) {
-        this.currentArea = 0;
-        this.editMode = 1; 
+      if (event.button == 0 && event.buttons == 0) {
+        this.currentArea = -1;
+        this.editMode = 0;
         this.downPoint.x = event.x;
         this.downPoint.y = event.y;
       }
@@ -251,8 +251,8 @@ export default {
   vertical-align: center;
   border-radius: 100%;
 }
-.del-box-btn::after{
-  content: '×';
+.del-box-btn::after {
+  content: "×";
   position: absolute;
   left: 0px;
 }
