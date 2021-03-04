@@ -18,6 +18,7 @@
         class="area-box"
         v-if="area.type == 'rect'"
         @mousedown="down(index, 1)"
+        @click="openOrCloseAttr"
         :style="
           'left:' +
           area.point[0].x +
@@ -30,6 +31,17 @@
           'px;'
         "
       >
+        <div class="area-input area-input-group" @click="noBubble" @mousedown="noBubble" @mouseup="noBubble">
+          <input class="area-input" type="text" v-model="area.url" placeholder="链接/url">
+          <input class="area-input" type="text" v-model="area.detail" placeholder="详细说明/alt">
+          <input class="area-input" type="text" v-model="area.clazz" placeholder="类/class">
+          <select class="area-input" type="text" v-model="area.target" placeholder="打开方式/target">
+            <option value="_blank">_blank</option>
+            <option value="_self">_self</option>
+            <option value="_parent">_parent</option>
+            <option value="_top">_top</option>
+          </select>
+        </div>
         <div class="del-box-btn" @click="delArea(index)"></div>
         <div @mousedown="down(index, 2)" class="right-box-btn"></div>
         <div @mousedown="down(index, 3)" class="bottom-box-btn"></div>
@@ -38,6 +50,7 @@
         class="area-box"
         v-if="area.type == 'circle'"
         @mousedown="down(index, 1)"
+        @click="openOrCloseAttr"
         :style="
           'border-radius:' +
           area.radius +
@@ -52,6 +65,17 @@
           'px;'
         "
       >
+        <div class="area-input area-input-group" @click="noBubble" @mousedown="noBubble" @mouseup="noBubble">
+          <input class="area-input" type="text" v-model="area.url" placeholder="链接/url">
+          <input class="area-input" type="text" v-model="area.detail" placeholder="详细说明/alt">
+          <input class="area-input" type="text" v-model="area.clazz" placeholder="类/class">
+          <select class="area-input" type="text" v-model="area.target" placeholder="打开方式/target">
+            <option value="_blank">_blank</option>
+            <option value="_self">_self</option>
+            <option value="_parent">_parent</option>
+            <option value="_top">_top</option>
+          </select>
+        </div>
         <div class="del-box-btn" @click="delArea(index)"></div>
         <div @mousedown="down(index, 2)" class="right-box-btn"></div>
       </div>
@@ -74,6 +98,7 @@
  *         radius:null,
  *         url: '',
  *         clazz: '',
+ *         target:''
  *         detail: ''
  *     }]
  *    }
@@ -118,13 +143,15 @@ export default {
 
   watch: {
     url(oldVal, val) {
-      console.log(oldVal + "-----------", val);
       if (oldVal != "" && oldVal != val) {
         this.changeUrl();
+        this.areas = []
       }
     },
+
     shape(val) {
-      if (val != "rect" && val != "circle" && val != "poly") {
+      // && val != "poly"
+      if (val != "rect" && val != "circle") {
         throw new Error(
           "请设置合法的形状;the shape：" + val + " is not support."
         );
@@ -133,13 +160,24 @@ export default {
   },
 
   methods: {
+    openOrCloseAttr(){
+      let display = event.target.querySelector(".area-input-group").style.display;
+      if(display == 'block'){
+        event.target.querySelector(".area-input-group").style.display = 'none';
+      }else{
+        event.target.querySelector(".area-input-group").style.display = 'block';
+      }
+      event.stopPropagation()
+    },
+    noBubble(){
+      event.stopPropagation()
+    },
     delArea(index) {
       let i = Number(index);
       this.areas.splice(i, 1);
     },
     down(index, type) {
       if (event.button == 0 && event.buttons == 1) {
-        console.log(event);
         this.currentArea = index;
         this.editMode = type;
         this.downPoint.x = event.x;
@@ -154,7 +192,7 @@ export default {
       image.onload = () => {
         this.height = image.height;
         this.width = image.width;
-      };
+      }
     },
     initArea() {
       if (this.json != null) {
@@ -169,7 +207,6 @@ export default {
       }
     },
     addArea() {
-      console.log("-----------");
       this.areas.push({
         type: this.shape,
         point: [
@@ -183,7 +220,33 @@ export default {
         target: "_blank",
       });
     },
-    exportCode() {},
+    exportCode() {
+      let code = Math.random()
+
+      let json = {
+        name: "hot-area-" + code,
+        version: this.version,
+        image: {
+          url:this.url,
+          height:this.height,
+          width:this.width,
+          areas:JSON.parse(JSON.stringify(this.areas))
+        }
+      }
+      
+      let html = `<img src='`+json.image.url+`' data-name='`+json.name+`' data-version='`+json.version+`' usemap='#map`+code+`'>
+      <map name='map`+code+`' id='map`+code+`'>`
+      for(let area of json.image.areas){
+        let coords = area.type == 'rect' ? area.point[0].x+','+area.point[0].y+','+area.point[1].x+','+area.point[1].y : (area.point[0].x+area.radius)+','+(area.point[0].y+area.radius)+','+area.radius
+        html += `<area shape='`+area.type+`' coords='`+coords+`' alt='`+area.detail+`' href='`+area.url+`' target='`+area.target+`' class='`+area.clazz+`'>`
+      }   
+      html += `</map>`
+
+      return {
+        json: json,
+        html: html
+      }
+    },
     move() {
       if (event.button == 0 && event.buttons == 1 && this.editMode != 0) {
         let xT = event.x - this.downPoint.x;
@@ -228,6 +291,18 @@ export default {
 </script>
 
 <style>
+.area-input{
+  width: 200px;
+}
+.area-input-group{
+  display: none;
+  position: absolute;
+  left: -210px;
+}
+.areas{
+  width: fit-content;
+  height: fit-content;
+}
 .hot-editor-area {
   position: relative;
 }
