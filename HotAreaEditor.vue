@@ -14,6 +14,7 @@
     "
   >
     <div class="areas" v-for="(area, index) in areas" :key="index">
+      <!-- 矩形 -->
       <div
         class="area-box"
         v-if="area.type == 'rect'"
@@ -31,10 +32,15 @@
           'px;'
         "
       >
-        <div class="area-input area-input-group" @click="noBubble" @mousedown="noBubble" @mouseup="noBubble">
-          <input class="area-input" type="text" v-model="area.url" placeholder="链接/url">
-          <input class="area-input" type="text" v-model="area.detail" placeholder="详细说明/alt">
-          <input class="area-input" type="text" v-model="area.clazz" placeholder="类/class">
+        <div
+          class="area-input area-input-group"
+          @click="noBubble"
+          @mousedown="noBubble"
+          @mouseup="noBubble"
+        >
+          <input class="area-input" type="text" v-model="area.url" placeholder="链接/url" />
+          <input class="area-input" type="text" v-model="area.detail" placeholder="详细说明/alt" />
+          <input class="area-input" type="text" v-model="area.clazz" placeholder="类/class" />
           <select class="area-input" type="text" v-model="area.target" placeholder="打开方式/target">
             <option value="_blank">_blank</option>
             <option value="_self">_self</option>
@@ -46,6 +52,7 @@
         <div @mousedown="down(index, 2)" class="right-box-btn"></div>
         <div @mousedown="down(index, 3)" class="bottom-box-btn"></div>
       </div>
+      <!-- 圆 -->
       <div
         class="area-box"
         v-if="area.type == 'circle'"
@@ -65,10 +72,15 @@
           'px;'
         "
       >
-        <div class="area-input area-input-group" @click="noBubble" @mousedown="noBubble" @mouseup="noBubble">
-          <input class="area-input" type="text" v-model="area.url" placeholder="链接/url">
-          <input class="area-input" type="text" v-model="area.detail" placeholder="详细说明/alt">
-          <input class="area-input" type="text" v-model="area.clazz" placeholder="类/class">
+        <div
+          class="area-input area-input-group"
+          @click="noBubble"
+          @mousedown="noBubble"
+          @mouseup="noBubble"
+        >
+          <input class="area-input" type="text" v-model="area.url" placeholder="链接/url" />
+          <input class="area-input" type="text" v-model="area.detail" placeholder="详细说明/alt" />
+          <input class="area-input" type="text" v-model="area.clazz" placeholder="类/class" />
           <select class="area-input" type="text" v-model="area.target" placeholder="打开方式/target">
             <option value="_blank">_blank</option>
             <option value="_self">_self</option>
@@ -79,6 +91,32 @@
         <div class="del-box-btn" @click="delArea(index)"></div>
         <div @mousedown="down(index, 2)" class="right-box-btn"></div>
       </div>
+      <!-- 多边形 -->
+      <svg
+        :width="width"
+        :height="height"
+        v-if="area.type == 'poly'"
+      >
+      <polygon @mousedown="down(index, 1)"  @click="openOrCloseAttr"  points="200,10 250,190 160,210" style="fill:rgba(150, 235, 238, 0.3);stroke:rgb(150, 235, 238);stroke-width:1"/>
+       <div
+          class="area-input area-input-group"
+          @click="noBubble"
+          @mousedown="noBubble"
+          @mouseup="noBubble"
+        >
+          <input class="area-input" type="text" v-model="area.url" placeholder="链接/url" />
+          <input class="area-input" type="text" v-model="area.detail" placeholder="详细说明/alt" />
+          <input class="area-input" type="text" v-model="area.clazz" placeholder="类/class" />
+          <select class="area-input" type="text" v-model="area.target" placeholder="打开方式/target">
+            <option value="_blank">_blank</option>
+            <option value="_self">_self</option>
+            <option value="_parent">_parent</option>
+            <option value="_top">_top</option>
+          </select>
+        </div>
+        <div class="del-box-btn" @click="delArea(index)"></div>
+      </svg>
+      <!-- end -->
     </div>
   </div>
 </template>
@@ -104,7 +142,7 @@
  *    }
  * }
  */
-const VERSION = 1.0;
+const VERSION = 1.1;
 
 export default {
   data() {
@@ -116,7 +154,7 @@ export default {
       width: 0,
       areas: [],
       editMode: 0,
-      currentArea: 0,
+      currentArea: 0
     };
   },
 
@@ -130,8 +168,8 @@ export default {
       type: Object,
       default: () => {
         return null;
-      },
-    },
+      }
+    }
   },
 
   mounted() {
@@ -145,7 +183,7 @@ export default {
     url(oldVal, val) {
       if (oldVal != "" && oldVal != val) {
         this.changeUrl();
-        this.areas = []
+        this.areas = [];
       }
     },
 
@@ -155,25 +193,28 @@ export default {
           "请设置合法的形状;the shape：" + val + " is not support."
         );
       }
-    },
+    }
   },
 
   methods: {
-    openOrCloseAttr(){
-      let display = event.target.querySelector(".area-input-group").style.display;
-      if(display == 'block'){
-        event.target.querySelector(".area-input-group").style.display = 'none';
+    openOrCloseAttr() {
+      let ele = null
+      if(event.target.nodeName=='polygon'){
+          ele = event.target.parentElement.querySelector(".area-input-group")
       }else{
-        event.target.querySelector(".area-input-group").style.display = 'block';
+        ele = event.target.querySelector(".area-input-group")
       }
-      event.stopPropagation()
+      let display = ele.style .display;
+      ele.style.display = display == "block" ? "none": "block"
+      event.stopPropagation();
     },
-    noBubble(){
-      event.stopPropagation()
+    noBubble() {
+      event.stopPropagation();
     },
     delArea(index) {
       let i = Number(index);
       this.areas.splice(i, 1);
+      event.stopPropagation();
     },
     down(index, type) {
       if (event.button == 0 && event.buttons == 1) {
@@ -191,7 +232,7 @@ export default {
       image.onload = () => {
         this.height = image.height;
         this.width = image.width;
-      }
+      };
     },
     initArea() {
       if (this.json != null) {
@@ -210,41 +251,81 @@ export default {
         type: this.shape,
         point: [
           { x: 0, y: 0 },
-          { x: 50, y: 50 },
+          { x: 50, y: 50 }
         ],
         radius: 25,
         url: "",
         clazz: "",
         detail: "",
-        target: "_blank",
+        target: "_blank"
       });
     },
     exportCode() {
-      let code = Math.random()
+      let code = Math.random();
 
       let json = {
         name: "hot-area-" + code,
         version: this.version,
         image: {
-          url:this.url,
-          height:this.height,
-          width:this.width,
-          areas:JSON.parse(JSON.stringify(this.areas))
+          url: this.url,
+          height: this.height,
+          width: this.width,
+          areas: JSON.parse(JSON.stringify(this.areas))
         }
+      };
+
+      let html =
+        `<img src='` +
+        json.image.url +
+        `' data-name='` +
+        json.name +
+        `' data-version='` +
+        json.version +
+        `' usemap='#map` +
+        code +
+        `'>
+      <map name='map` +
+        code +
+        `' id='map` +
+        code +
+        `'>`;
+      for (let area of json.image.areas) {
+        let coords =
+          area.type == "rect"
+            ? area.point[0].x +
+              "," +
+              area.point[0].y +
+              "," +
+              area.point[1].x +
+              "," +
+              area.point[1].y
+            : area.point[0].x +
+              area.radius +
+              "," +
+              (area.point[0].y + area.radius) +
+              "," +
+              area.radius;
+        html +=
+          `<area shape='` +
+          area.type +
+          `' coords='` +
+          coords +
+          `' alt='` +
+          area.detail +
+          `' href='` +
+          area.url +
+          `' target='` +
+          area.target +
+          `' class='` +
+          area.clazz +
+          `'>`;
       }
-      
-      let html = `<img src='`+json.image.url+`' data-name='`+json.name+`' data-version='`+json.version+`' usemap='#map`+code+`'>
-      <map name='map`+code+`' id='map`+code+`'>`
-      for(let area of json.image.areas){
-        let coords = area.type == 'rect' ? area.point[0].x+','+area.point[0].y+','+area.point[1].x+','+area.point[1].y : (area.point[0].x+area.radius)+','+(area.point[0].y+area.radius)+','+area.radius
-        html += `<area shape='`+area.type+`' coords='`+coords+`' alt='`+area.detail+`' href='`+area.url+`' target='`+area.target+`' class='`+area.clazz+`'>`
-      }   
-      html += `</map>`
+      html += `</map>`;
 
       return {
         json: json,
         html: html
-      }
+      };
     },
     move() {
       if (event.button == 0 && event.buttons == 1 && this.editMode != 0) {
@@ -284,21 +365,21 @@ export default {
         this.downPoint.x = event.x;
         this.downPoint.y = event.y;
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
 <style>
-.area-input{
+.area-input {
   width: 200px;
 }
-.area-input-group{
+.area-input-group {
   display: none;
   position: absolute;
   left: -210px;
 }
-.areas{
+.areas {
   width: fit-content;
   height: fit-content;
 }
