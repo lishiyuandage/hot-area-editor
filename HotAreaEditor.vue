@@ -150,8 +150,7 @@ export default {
     },
 
     shape(val) {
-      // && val != "poly"
-      if (val != "rect" && val != "circle") {
+      if (val != "rect" && val != "circle" && val != "poly") {
         throw new Error(
           "请设置合法的形状;the shape：" + val + " is not support."
         );

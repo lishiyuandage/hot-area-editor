@@ -66,20 +66,20 @@ App running at:
 
 ```json
  {
-  name:'',
-  version:1.0,
-  image:{
-     url:"http://baidu.com/logo.jpg",
-     height:50,
-     width:200,
-     areas:[{
-         type: 'rect',
-         point:[{}]
-         radius:null,
-         url: '',
-         clazz: '',
-         target:''
-         detail: ''
+  'name':'',
+  'version':1.0,
+  'image':{
+     'url':"http://baidu.com/logo.jpg",
+     'height':50,
+     'width':200,
+     'areas':[{
+         'type': 'rect',
+         'point':[{}]
+         'radius':null,
+         'url': '',
+         'clazz': '',
+         'target':''
+         'detail': ''
      }]
     }
  }
