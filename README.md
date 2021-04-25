@@ -15,7 +15,7 @@ import HotAreaEditor from './HotAreaEditor.vue'
 
 ```html
 <div class="box-editor">
-    <HotAreaEditor :url="url" ref="editor1" :shape="shape"></HotAreaEditor>
+    <HotAreaEditor :url="url" ref="editor1" :shape="shape" :svgEditorOpen="svgEditorOpen"></HotAreaEditor>
 </div>
 ```
 **注：**prop中json与url你必须提供其中一个。
@@ -25,7 +25,8 @@ import HotAreaEditor from './HotAreaEditor.vue'
 ```javascript
 this.$refs.editor1.addArea()
 ```
-- 导出代码。export code.
+**注：**你必须新描画出你需要添加的多边形状才能添加热区到图像。svgEditorOpen=true 可以打开多边形编辑器，你直接在点击添加顶点，然后关闭编辑器，添加热区即可。需要注意的是，你添加完这个热区后会清除你在多边形编辑器里面的内容
+**tips：**You must newly draw the polygon you need to add in order to add the hot zone to the image. svgEditorOpen=true opens the polygon editor, you can add the hot zone directly by clicking Add Vertex and then closing the editor. Note that after you add the hot zone, it will clear your content in the polygon editor。
 ```javascript
 let code = this.$refs.editor1.exportCode()
 this.html = code.html
